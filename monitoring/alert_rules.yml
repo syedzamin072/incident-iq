@@ -1,0 +1,10 @@
+groups:
+  - name: orders-service-alerts
+    rules:
+      - alert: HighErrorRate
+        expr: sum(rate(http_requests_total{status="500"}[30s])) > 0
+        for: 10s
+        labels:
+          severity: critical
+        annotations:
+          summary: "Error rate detected on orders service"

@@ -1,0 +1,67 @@
+[
+  {
+    "source": "db-pool-exhaustion.md",
+    "section": "Summary",
+    "text": "A surge in concurrent requests exhausted the database connection pool. New requests queued waiting for a free connection, and once the wait exceeded the client timeout, requests began failing with connection errors."
+  },
+  {
+    "source": "db-pool-exhaustion.md",
+    "section": "Root Cause",
+    "text": "The connection pool size was fixed at a low default and never tuned for peak traffic. A slow downstream query held connections open longer than expected under load, reducing effective pool capacity exactly when demand spiked."
+  },
+  {
+    "source": "db-pool-exhaustion.md",
+    "section": "Fix",
+    "text": "Increased pool size with headroom for peak load, added a query timeout so a single slow query cannot hold a connection indefinitely, and added pool utilization as a first-class metric with an alert threshold before exhaustion, not after."
+  },
+  {
+    "source": "latency-spike.md",
+    "section": "Summary",
+    "text": "p95 latency on the primary API rose sharply over several minutes with no corresponding error rate increase. Users experienced slow but eventually successful responses."
+  },
+  {
+    "source": "latency-spike.md",
+    "section": "Root Cause",
+    "text": "A downstream dependency's own latency had degraded, and the calling service had no circuit breaker or timeout tuned tightly enough, so slow calls piled up and consumed worker threads waiting on responses that eventually succeeded."
+  },
+  {
+    "source": "latency-spike.md",
+    "section": "Fix",
+    "text": "Added a tighter timeout with a circuit breaker on the downstream call, plus a fallback path returning cached data when the dependency is slow, keeping p95 latency bounded even when a dependency degrades."
+  },
+  {
+    "source": "error-rate-spike.md",
+    "section": "Summary",
+    "text": "Error rate jumped from near zero to over 25% suddenly, with requests failing consistently rather than intermittently. No corresponding latency increase was observed before the errors began."
+  },
+  {
+    "source": "error-rate-spike.md",
+    "section": "Root Cause",
+    "text": "A recent deployment introduced a code path that failed under a specific but common condition, causing a consistent share of requests to error immediately rather than degrading gradually."
+  },
+  {
+    "source": "error-rate-spike.md",
+    "section": "Fix",
+    "text": "Rolled back the deployment immediately to stop user impact, then fixed the underlying bug with a regression test covering the failing condition before redeploying."
+  },
+  {
+    "source": "memory-leak.md",
+    "section": "Summary",
+    "text": "Memory usage climbed steadily over time until the process was killed by the operating system, causing a full service restart and a brief outage."
+  },
+  {
+    "source": "memory-leak.md",
+    "section": "Root Cause",
+    "text": "An in-process cache had no eviction policy and no maximum size, so entries accumulated indefinitely as new unique keys were seen, never being freed even though most entries were only used once."
+  },
+  {
+    "source": "memory-leak.md",
+    "section": "Fix",
+    "text": "Added an LRU eviction policy with a hard maximum cache size, and added a memory usage gauge with an alert well before the historical crash threshold, giving time to intervene before a restart is forced."
+  },
+  {
+    "source": "guardrail-practices.md",
+    "section": "Principle",
+    "text": "An automated diagnosis system should never execute or directly recommend an irreversible or destructive action, such as deleting data or force-restarting a stateful service, without a human explicitly confirming it first."
+  }
+]

@@ -6,4 +6,7 @@ dependencies = [
     "sentence-transformers",
     "faiss-cpu",
     "numpy",
+    "langgraph",
+    "fastapi",
+    "uvicorn[standard]",
 ]

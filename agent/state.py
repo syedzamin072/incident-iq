@@ -6,3 +6,4 @@ class IncidentState(TypedDict, total=False):
     category: str
     retrieved: list[dict]
     diagnosis: Optional[str]
+    cache_hit: bool

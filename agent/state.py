@@ -7,3 +7,4 @@ class IncidentState(TypedDict, total=False):
     retrieved: list[dict]
     diagnosis: Optional[str]
     cache_hit: bool
+    guardrail_flagged: bool

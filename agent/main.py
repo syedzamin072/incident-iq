@@ -26,4 +26,5 @@ def diagnose_incident(payload: AlertPayload):
         "diagnosis": result.get("diagnosis"),
         "sources": [c["source"] for c in result.get("retrieved", [])] if result.get("retrieved") else [],
         "cache_hit": result.get("cache_hit", False),
-        }
+        "guardrail_flagged": result.get("guardrail_flagged", False),
+    }
